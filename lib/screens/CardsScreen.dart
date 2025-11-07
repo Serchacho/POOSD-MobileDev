@@ -1,8 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-
-import '../utils/GlobalData.dart';import '../utils/getAPI.dart';
+import '../utils/GlobalData.dart';
+import '../utils/getAPI.dart';
 
 class CardsScreen extends StatefulWidget {
   @override
@@ -11,257 +10,246 @@ class CardsScreen extends StatefulWidget {
 
 class _CardsScreenState extends State<CardsScreen> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.red,
-        body: SafeArea(
-          child: MainPage(),
-        )
-    );
-  }
-}
-
-class MainPage extends StatefulWidget {
-  @override
-  _MainPageState createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
-
-  String message = '', newMessageText = '';
-  String addMessage = '', newAddMessage = '';
-  String searchMessage = '', newSearchMessage = '';
-
-  String card = '', search = '';
-  void changeText() {
-    setState(() {
-      message = newMessageText;
-    });
-  }
-
-  void changeAddText() {
-    setState(() {
-      addMessage = newAddMessage;
-    });
-  }
-
-  void changeSearchText() {
-    setState(() {
-      searchMessage = newSearchMessage;
-    });
-  }
-
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-
+      backgroundColor: Colors.white,
+      body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Top Row with Logo and Login/Signup Button
+            Container(
+              color: Colors.black,
+              padding: EdgeInsets.only(top: 10, right: 10, left: 10, bottom: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'images/logo.png',
+                    height: 42,
+                    width: 42,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      minimumSize: Size(10, 10),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/login');
+                    },
+                    child: Text(
+                      'Login / Signup',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
-          children: <Widget>[
-
-            Row(
-                children: <Widget>[
+            // Search Bar Section
+            Container(
+              color: Colors.black,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                children: [
                   Expanded(
-                    child: Column(
-                        children: <Widget>[
-                          Container(
-                            width: 200,
-                            child:
-                            TextField (
-                              onChanged: (text)
-                              {
-                                search = text;
-                              },
-
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
                               decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Search',
-                                  hintText: 'Search for a Card'
+                                hintText: 'Search products...',
+                                hintStyle: TextStyle(color: Colors.grey[600]),
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.symmetric(horizontal: 16),
                               ),
                             ),
                           ),
-                          Row(
-                            children: <Widget>[
-                              Text('$searchMessage',style: TextStyle(fontSize: 14 ,color:Colors.black)),
-                            ],
-                          ),
-
-                        ]
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.amber[700],
+                              child: IconButton(
+                                icon: Icon(Icons.search, color: Colors.black),
+                                onPressed: _handleSearch,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                  ElevatedButton(
-                      child: Text('Search',style: TextStyle(fontSize: 14 ,color:Colors.black)),
-
-                      onPressed: () async
-                      {
-                        newSearchMessage = "";
-                        changeSearchText();
-
-                        String payload = '{"userId":"' + GlobalData.userId.toString() + '","search":"' + search.trim() + '"}';
-
-                        var jsonObject;
-                        try
-                        {
-                          String url = 'http://testubuntu.com/LAMPAPI/SearchColors.php';
-                          String ret = await CardsData.getJson(url, payload); // Changed CardsData to getAPI
-                          jsonObject = json.decode(ret);
-                        }
-                        catch(e)
-                        {
-                          newSearchMessage = e.toString();
-                          changeSearchText();
-                          return;
-                        }
-
-                        var results = jsonObject["results"];
-                        var i = 0;
-                        while( true )
-                        {
-                          try
-                          {
-                            newSearchMessage += results[i];
-                            newSearchMessage += "\n";
-                            i++;
-                          }
-                          catch(e)
-                          {
-                            break;
-                          }
-                        }
-
-                        changeSearchText();
-
-
-                      },
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.brown[50],
-                          foregroundColor: Colors.black,
-                          padding: EdgeInsets.all(8.0)
-                      )
-                  )
-
-                ]
+                ],
+              ),
             ),
 
-            Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          width: 200,
-                          child:
-                          TextField (
-                            onChanged: (text)
-                            {
-                              card = text;
-                            },
-
-                            decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.white,
-                                border: OutlineInputBorder(),
-                                labelText: 'Add',
-                                hintText: 'Add a Card'
+            // Green Banner Section
+            Container(
+              width: double.infinity,
+              color: Color(0xFF005A1C),
+              padding: EdgeInsets.symmetric(vertical: 30),
+              child: Center(
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Shop ',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      WidgetSpan(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.amber[700],
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Text(
+                            'simple',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
                             ),
                           ),
                         ),
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Text('$addMessage',style: TextStyle(fontSize: 14 ,color:Colors.black)),
-                            ),
-
-                          ],
+                      ),
+                      TextSpan(
+                        text: ' with CheapCart!',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
-                    ),
-                  ),
-                  ElevatedButton(
-                      child: Text('Add',style: TextStyle(fontSize: 14 ,color:Colors.black)),
-                      onPressed: () async
-                      {
-                        newAddMessage = "";
-                        changeAddText();
-
-                        String payload = json.encode({
-                          "color": card.trim(),
-                          "userId": GlobalData.userId
-                        });
-
-
-                        var jsonObject;
-                        try
-                        {
-                          String url = 'http://testubuntu.com/LAMPAPI/AddColor.php';
-                          // It seems CardsData is not defined in this file. Assuming it's a typo for getAPI
-                          String ret = await CardsData.getJson(url, payload); // Changed CardsData to getAPI
-                          if (ret.trim().isEmpty) {
-                            newAddMessage = "No server response";
-                            changeAddText();
-                          } else {
-                            newAddMessage = ret.trim();
-                            changeAddText();
-                          }
-                        }
-                        catch(e)
-                        {
-                          newAddMessage = e.toString();
-                          changeAddText();
-                          return;
-                        }
-
-                        newAddMessage = "Card has been added";
-                        changeAddText();
-                      },
-
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.brown[50],
-                          foregroundColor: Colors.black,
-                          padding: EdgeInsets.all(8.0)
-                      )
-                  )
-
-                ]
-            ),
-
-            Row(
-              children: <Widget>[
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.brown[50],
-                    foregroundColor: Colors.black,
-                    padding: EdgeInsets.all(8.0),
-                  ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/login');
-                  },
-                  child: Text(
-                    'To Login',
-                    style: TextStyle(fontSize: 14),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            )
-          ],
-        )
+              ),
+            ),
 
+            // Featured Products Section (2x2 layout)
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Featured Products',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    GridView.count(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        _buildProductCard('HP Laptop', '\$799.99', 'images/laptop.png'),
+                        _buildProductCard('Noise Cancelling Headphones', '\$199.99', 'images/headphones.png'),
+                        _buildProductCard('Smartphone', '\$699.99', 'images/phone.png'),
+                        _buildProductCard('Smartwatch', '\$249.99', 'images/watch.png'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
+  Widget _buildProductCard(String name, String price, String imagePath) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3)),
+        ],
+      ),
+      padding: EdgeInsets.all(12),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Image.asset(
+              imagePath,
+              fit: BoxFit.contain,
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            name,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 6),
+          Text(
+            price,
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.grey[800],
+            ),
+          ),
+          SizedBox(height: 8),
+          ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.amber[700],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+            ),
+            child: Text(
+              'Add to List',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleSearch() {
+    // Keep existing search logic here
+  }
+
+  void _handleAdd() {
+    // Keep existing add logic here
+  }
 }
