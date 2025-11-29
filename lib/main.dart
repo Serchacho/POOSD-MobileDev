@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(),
-      initialRoute: '/cart',
+      initialRoute: '/login',
       routes: Routes.getroutes,
     );
   }

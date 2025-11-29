@@ -1,9 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-
-import '../utils/GlobalData.dart';
-import '../utils/getAPI.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -17,87 +12,103 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Emoji with sunglasses
-                Image.asset(
-                  'images/logo.png',
-                  height: 100,
-                  width: 100,
-                ),
-                SizedBox(height: 30),
-
-                // Title
-                Text(
-                  'Shop Smart with Cheap Cart!',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1E3A5F),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 50),
-
-                // White card container
-                Container(
-                  padding: EdgeInsets.all(32.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey[300]!),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        spreadRadius: 1,
-                        blurRadius: 5,
-                        offset: Offset(0, 2),
+      backgroundColor: Color(0xFF1A1A1A), // Dark background
+      body: Column(
+        children: [
+          // Top header bar
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              border: Border(
+                bottom: BorderSide(color: Color(0xFF4CAF50), width: 2),
+              ),
+            ),
+            child: SafeArea(
+              bottom: false,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Logo and app name
+                  Row(
+                    children: [
+                      Image.asset(
+                        'images/logo.png',
+                        height: 40,
+                        width: 40,
+                      ),
+                      SizedBox(width: 12),
+                      Text(
+                        'SharedCart',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
+                  // Right side button
+                  TextButton.icon(
+                    onPressed: () {
+                      // Handle sign in
+                    },
+                    icon: Icon(Icons.person_outline, color: Colors.white),
+                    label: Text(
+                      'Sign In',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Main content area
+          Expanded(
+            child: Center(
+              child: SingleChildScrollView(
+                child: Container(
+                  width: 420,
+                  margin: EdgeInsets.all(24.0),
+                  padding: EdgeInsets.all(40.0),
+                  decoration: BoxDecoration(
+                    color: Color(0xFF2D2D2D),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // "Sign in to Start Shopping" heading
+                      // Title
                       Text(
                         'Sign in to Start Shopping',
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF1E3A5F),
+                          color: Color(0xFFFFEB3B),
                         ),
+                        textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: 24),
+                      SizedBox(height: 32),
 
                       // Username/Email field
                       TextField(
                         onChanged: (text) {
                           username = text;
                         },
+                        style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           hintText: 'Username or Email',
-                          hintStyle: TextStyle(color: Colors.grey[400]),
+                          hintStyle: TextStyle(color: Colors.grey[500]),
                           filled: true,
-                          fillColor: Colors.grey[50],
+                          fillColor: Color(0xFF3A3A3A),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(4),
-                            borderSide: BorderSide(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(4),
-                            borderSide: BorderSide(color: Colors.grey[300]!),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(4),
-                            borderSide: BorderSide(color: Colors.green[700]!, width: 2),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 18),
                         ),
                       ),
                       SizedBox(height: 16),
@@ -108,100 +119,104 @@ class _LoginScreenState extends State<LoginScreen> {
                         onChanged: (text) {
                           password = text;
                         },
+                        style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           hintText: 'Password',
-                          hintStyle: TextStyle(color: Colors.grey[400]),
+                          hintStyle: TextStyle(color: Colors.grey[500]),
                           filled: true,
-                          fillColor: Colors.grey[50],
+                          fillColor: Color(0xFF3A3A3A),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(4),
-                            borderSide: BorderSide(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(4),
-                            borderSide: BorderSide(color: Colors.grey[300]!),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(4),
-                            borderSide: BorderSide(color: Colors.green[700]!, width: 2),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 18),
                         ),
                       ),
                       SizedBox(height: 24),
 
                       // LOG IN button
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // Handle login
-                            print('Login with: $username');
-                          },
-                          style: ElevatedButton.styleFrom(
-                            // backgroundColor: Color(0x000A550A), // Dark green
-                            backgroundColor: Color(0xFF1B5E20), // Dark green
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Handle login
+                          print('Login with: $username');
+                          // Navigator.pushNamed(context, '/cards');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF4CAF50),
+                          padding: EdgeInsets.symmetric(vertical: 18),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Text(
-                            'LOG IN',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              letterSpacing: 0.5,
-                            ),
+                        ),
+                        child: Text(
+                          'LOG IN',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: 1,
                           ),
                         ),
                       ),
                       SizedBox(height: 24),
 
-                      // "Don't Have An Account?" text
+                      // Forgot Password link
+                      TextButton(
+                        onPressed: () {
+                          // Handle forgot password
+                        },
+                        child: Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 24),
+
+                      // Don't Have An Account text
                       Text(
                         "Don't Have An Account?",
                         style: TextStyle(
                           fontSize: 16,
-                          color: Color(0xFF1E3A5F),
+                          color: Colors.white,
                         ),
+                        textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: 12),
+                      SizedBox(height: 16),
 
                       // CREATE ACCOUNT button
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // Handle create account
-                            print('Navigate to create account');
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF1B5E20), // Dark green
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Handle create account
+                          print('Navigate to create account');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF4CAF50),
+                          padding: EdgeInsets.symmetric(vertical: 18),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Text(
-                            'CREATE ACCOUNT',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              letterSpacing: 0.5,
-                            ),
+                        ),
+                        child: Text(
+                          'CREATE ACCOUNT',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: 1,
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
