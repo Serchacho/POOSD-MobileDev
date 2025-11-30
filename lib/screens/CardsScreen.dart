@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../utils/GlobalData.dart';
-import '../utils/getAPI.dart';
 
 class CardsScreen extends StatefulWidget {
+  const CardsScreen({super.key});
+
   @override
   _CardsScreenState createState() => _CardsScreenState();
 }
