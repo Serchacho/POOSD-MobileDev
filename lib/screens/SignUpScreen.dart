@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../utils/auth_service.dart';
+import '../utils/list_service.dart';
+
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
@@ -29,21 +32,50 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Future<void> _handleCreateAccount() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final payload = {
-      'firstName': _firstNameController.text.trim(),
-      'lastName': _lastNameController.text.trim(),
-      'email': _emailController.text.trim(),
-      'username': _usernameController.text.trim(),
-      'password': _passwordController.text,
-    };
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Signup API not connected yet'),
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(
+        child: CircularProgressIndicator(color: Color(0xFF00C676)),
       ),
     );
 
-    debugPrint('Sign up payload: $payload');
+    try {
+      // Call the signup API
+      final result = await AuthService.signup(
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+        email: _emailController.text.trim(),
+        login: _usernameController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      // Close loading dialog
+      Navigator.pop(context);
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['message'] ?? 'Account created! Please check your email.'),
+          backgroundColor: Color(0xFF00C676),
+        ),
+      );
+
+      // Navigate to sign in screen
+      Navigator.pushReplacementNamed(context, '/signIn');
+    } catch (e) {
+      // Close loading dialog
+      Navigator.pop(context);
+
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceAll('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override

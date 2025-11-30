@@ -1,11 +1,49 @@
 import 'package:flutter/material.dart';
-import 'HomePageScreen.dart';
+// import 'HomePageScreen.dart';
 
-class MyListsScreen extends StatelessWidget {
+import '../utils/auth_service.dart';
+import '../utils/list_service.dart';
+
+class MyListsScreen extends StatefulWidget {
   const MyListsScreen({super.key});
 
+  @override
+  State<MyListsScreen> createState() => _MyListsScreenState();
+}
+
+class _MyListsScreenState extends State<MyListsScreen> {
+  List<Map<String, dynamic>> lists = [];
+  bool isLoading = true;
+  String errorMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLists();
+  }
+
+  Future<void> _loadLists() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
+
+    try {
+      final fetchedLists = await ListService.getLists();
+      setState(() {
+        lists = fetchedLists;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        errorMessage = e.toString().replaceAll('Exception: ', '');
+        isLoading = false;
+      });
+    }
+  }
+
   Future<void> _handleLogout(BuildContext context) async {
-    await AuthService.logOutMock();
+    await AuthService.logout();
     Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
 

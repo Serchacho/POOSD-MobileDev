@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'HomePageScreen.dart'; // for AuthService + consistent header
+// import 'HomePageScreen.dart'; // for AuthService + consistent header
+
+import '../utils/auth_service.dart';
+import '../utils/list_service.dart';
 
 class CreateNewListScreen extends StatefulWidget {
   const CreateNewListScreen({super.key});
@@ -20,7 +23,7 @@ class _CreateNewListScreenState extends State<CreateNewListScreen> {
   }
 
   Future<void> _handleLogout(BuildContext context) async {
-    await AuthService.logOutMock();
+    await AuthService.logout();
     Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
 

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'HomePageScreen.dart';
+// import 'HomePageScreen.dart';
+
+import '../utils/auth_service.dart';
+import '../utils/list_service.dart';
 
 class JoinListScreen extends StatelessWidget {
   const JoinListScreen({super.key});
 
   Future<void> _handleLogout(BuildContext context) async {
-    await AuthService.logOutMock();
+    await AuthService.logout();
     Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
 
@@ -248,17 +251,57 @@ class JoinListScreen extends StatelessWidget {
                             ),
                             const SizedBox(width: 12),
                             ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: accentGreen,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 24, vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(22),
-                                ),
-                              ),
-                              onPressed: () {
-                                // no functionality yet
+                              style: ElevatedButton.styleFrom(/* ... */),
+                              onPressed: () async {
+                                final code = _codeController.text.trim();
+
+                                if (code.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Please enter a list code'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                // Show loading
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) => Center(
+                                    child: CircularProgressIndicator(color: accentGreen),
+                                  ),
+                                );
+
+                                try {
+                                  await ListService.joinList(code);
+
+                                  // Close loading
+                                  Navigator.pop(context);
+
+                                  // Show success
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Joined list successfully!'),
+                                      backgroundColor: accentGreen,
+                                    ),
+                                  );
+
+                                  // Navigate to My Lists
+                                  Navigator.pushReplacementNamed(context, '/myLists');
+                                } catch (e) {
+                                  // Close loading
+                                  Navigator.pop(context);
+
+                                  // Show error
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(e.toString().replaceAll('Exception: ', '')),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
                               },
                               child: const Text('Join List'),
                             ),

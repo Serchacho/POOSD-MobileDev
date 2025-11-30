@@ -1,28 +1,31 @@
 import 'package:flutter/material.dart';
 
+import '../utils/auth_service.dart';
+import '../utils/list_service.dart';
+
 /// Temporary auth "API" stub.
 /// Later you will replace this with real HTTP calls to your backend.
-class AuthService {
-  static bool _isLoggedIn = true; // flip this for manual testing
-  static final String _firstName = 'Ryan'; // change this when api is implemented to display username
-
-  static Future<bool> checkLoginStatus() async {
-    // Simulate a small network delay.
-    await Future.delayed(const Duration(milliseconds: 300));
-    return _isLoggedIn;
-  }
-
-  static String? get firstName => _isLoggedIn ? _firstName : null;
-
-  // These will eventually call your real backend.
-  static Future<void> logInMock() async {
-    _isLoggedIn = true;
-  }
-
-  static Future<void> logOutMock() async {
-    _isLoggedIn = false;
-  }
-}
+// class AuthService {
+//   static bool _isLoggedIn = true; // flip this for manual testing
+//   static final String _firstName = 'Ryan'; // change this when api is implemented to display username
+//
+//   static Future<bool> checkLoginStatus() async {
+//     // Simulate a small network delay.
+//     await Future.delayed(const Duration(milliseconds: 300));
+//     return _isLoggedIn;
+//   }
+//
+//   static String? get firstName => _isLoggedIn ? _firstName : null;
+//
+//   // These will eventually call your real backend.
+//   static Future<void> logInMock() async {
+//     _isLoggedIn = true;
+//   }
+//
+//   static Future<void> logOutMock() async {
+//     _isLoggedIn = false;
+//   }
+// }
 
 enum _AuthStatus { unknown, loggedOut, loggedIn }
 
@@ -50,7 +53,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   }
 
   Future<void> _handleLogout(BuildContext context) async {
-    await AuthService.logOutMock();
+    await AuthService.logout();
     setState(() {
       _status = _AuthStatus.loggedOut;
     });

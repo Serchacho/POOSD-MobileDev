@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'HomePageScreen.dart';
+// import 'HomePageScreen.dart';
+
+import '../utils/auth_service.dart';
+import '../utils/list_service.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -24,21 +27,39 @@ class _SignInScreenState extends State<SignInScreen> {
   Future<void> _handleSignIn() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final payload = {
-      'identifier': _identifierController.text.trim(),
-      'password': _passwordController.text,
-    };
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Sign-in API not connected yet'),
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(
+        child: CircularProgressIndicator(color: Color(0xFF00C676)),
       ),
     );
 
-    debugPrint('Sign in payload: $payload');
+    try {
+      // Call the login API
+      await AuthService.userLogin(
+        _identifierController.text.trim(),
+        _passwordController.text,
+      );
 
-    await AuthService.logInMock();
-    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      // Close loading dialog
+      Navigator.pop(context);
+
+      // Navigate to home
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+    } catch (e) {
+      // Close loading dialog
+      Navigator.pop(context);
+
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceAll('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override

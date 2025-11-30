@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../utils/auth_service.dart';
+import '../utils/list_service.dart';
+
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
 
@@ -20,15 +23,46 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Future<void> _handleSendReset() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final payload = {
-      'email': _emailController.text.trim(),
-    };
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Reset password API not connected yet')),
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(
+        child: CircularProgressIndicator(color: Color(0xFF00C676)),
+      ),
     );
 
-    debugPrint('Forgot password payload: $payload');
+    try {
+      // Call the password reset API
+      await AuthService.requestPasswordReset(
+        _emailController.text.trim(),
+      );
+
+      // Close loading dialog
+      Navigator.pop(context);
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Password reset email sent! Check your inbox.'),
+          backgroundColor: Color(0xFF00C676),
+        ),
+      );
+
+      // Navigate to sign in
+      Navigator.pushReplacementNamed(context, '/signIn');
+    } catch (e) {
+      // Close loading dialog
+      Navigator.pop(context);
+
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceAll('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
