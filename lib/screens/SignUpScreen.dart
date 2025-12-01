@@ -37,6 +37,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       'password': _passwordController.text,
     };
 
+    // Placeholder for API wiring later.
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Signup API not connected yet'),
@@ -72,14 +73,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: ListView(
             padding: const EdgeInsets.only(bottom: 32),
             children: [
+              // ---------- HEADER ----------
               Padding(
                 padding:
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    InkWell(
-                      borderRadius: BorderRadius.circular(20),
+                    // Logo + title (tap -> home)
+                    GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, '/home');
                       },
@@ -109,7 +111,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ],
                       ),
                     ),
+
                     const Spacer(),
+
+                    // Top "Sign In"
                     TextButton.icon(
                       onPressed: () {
                         Navigator.pushNamed(context, '/signIn');
@@ -127,13 +132,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+
+                    const SizedBox(width: 6),
+
+                    // Top "Get Started"
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: accentYellow,
                         foregroundColor: Colors.black,
+                        // Slightly reduced padding to avoid overflow on small screens
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 18, vertical: 10),
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -146,7 +157,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                 ),
               ),
+
               const SizedBox(height: 16),
+
+              // ---------- SIGN-UP CARD ----------
               Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 500),
@@ -182,18 +196,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ),
                           const SizedBox(height: 24),
+
                           _buildField(
                             controller: _firstNameController,
                             hint: 'First Name',
                             icon: Icons.person_outline,
                           ),
                           const SizedBox(height: 12),
+
                           _buildField(
                             controller: _lastNameController,
                             hint: 'Last Name',
                             icon: Icons.person_outline,
                           ),
                           const SizedBox(height: 12),
+
                           _buildField(
                             controller: _emailController,
                             hint: 'Email',
@@ -201,19 +218,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             keyboardType: TextInputType.emailAddress,
                           ),
                           const SizedBox(height: 12),
+
                           _buildField(
                             controller: _usernameController,
                             hint: 'Username',
                             icon: Icons.account_circle_outlined,
                           ),
                           const SizedBox(height: 12),
+
                           _buildField(
                             controller: _passwordController,
                             hint: 'Password',
                             icon: Icons.lock_outline,
                             obscureText: true,
                           ),
+
                           const SizedBox(height: 24),
+
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -221,7 +242,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 backgroundColor: accentGreen,
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 14),
+                                  vertical: 14,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(24),
                                 ),
@@ -233,7 +255,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                             ),
                           ),
+
                           const SizedBox(height: 24),
+
                           Text(
                             'Already have an account?',
                             style: TextStyle(
@@ -260,7 +284,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
               ),
+
               const SizedBox(height: 40),
+
+              // ---------- FOOTER ----------
               Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Column(

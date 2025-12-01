@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'HomePageScreen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -10,13 +9,12 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
-
-  final _identifierController = TextEditingController();
+  final _usernameEmailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    _identifierController.dispose();
+    _usernameEmailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -25,10 +23,11 @@ class _SignInScreenState extends State<SignInScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final payload = {
-      'identifier': _identifierController.text.trim(),
+      'usernameOrEmail': _usernameEmailController.text.trim(),
       'password': _passwordController.text,
     };
 
+    // Placeholder for your future API call.
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Sign-in API not connected yet'),
@@ -36,9 +35,6 @@ class _SignInScreenState extends State<SignInScreen> {
     );
 
     debugPrint('Sign in payload: $payload');
-
-    await AuthService.logInMock();
-    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
 
   @override
@@ -67,14 +63,15 @@ class _SignInScreenState extends State<SignInScreen> {
           child: ListView(
             padding: const EdgeInsets.only(bottom: 32),
             children: [
+              // ---------- HEADER ----------
               Padding(
                 padding:
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    InkWell(
-                      borderRadius: BorderRadius.circular(20),
+                    // Logo + title (tappable -> home)
+                    GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, '/home');
                       },
@@ -104,7 +101,10 @@ class _SignInScreenState extends State<SignInScreen> {
                         ],
                       ),
                     ),
+
                     const Spacer(),
+
+                    // "Sign In" top button
                     TextButton.icon(
                       onPressed: () {
                         Navigator.pushNamed(context, '/signIn');
@@ -122,13 +122,19 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+
+                    const SizedBox(width: 6),
+
+                    // "Get Started" button
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: accentYellow,
                         foregroundColor: Colors.black,
+                        // Slightly smaller padding to prevent overflow on narrow screens
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 18, vertical: 10),
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -141,7 +147,10 @@ class _SignInScreenState extends State<SignInScreen> {
                   ],
                 ),
               ),
+
               const SizedBox(height: 16),
+
+              // ---------- SIGN-IN CARD ----------
               Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 500),
@@ -177,28 +186,28 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                           ),
                           const SizedBox(height: 24),
+
+                          // Username / Email
                           _buildField(
-                            controller: _identifierController,
+                            controller: _usernameEmailController,
                             hint: 'Username or Email',
                             icon: Icons.person_outline,
                           ),
                           const SizedBox(height: 12),
+
+                          // Password
                           _buildField(
                             controller: _passwordController,
                             hint: 'Password',
                             icon: Icons.lock_outline,
                             obscureText: true,
                           ),
+
                           const SizedBox(height: 12),
+
                           Align(
                             alignment: Alignment.centerLeft,
                             child: TextButton(
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                                minimumSize: const Size(0, 0),
-                                tapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
-                              ),
                               onPressed: () {
                                 Navigator.pushNamed(
                                     context, '/forgotPassword');
@@ -212,15 +221,18 @@ class _SignInScreenState extends State<SignInScreen> {
                               ),
                             ),
                           ),
+
                           const SizedBox(height: 8),
+
+                          // Center green Sign In button
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: accentGreen,
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 14),
+                                padding:
+                                const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(24),
                                 ),
@@ -232,7 +244,9 @@ class _SignInScreenState extends State<SignInScreen> {
                               ),
                             ),
                           ),
+
                           const SizedBox(height: 24),
+
                           Text(
                             "Don't have an account?",
                             style: TextStyle(
@@ -259,7 +273,10 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                 ),
               ),
+
               const SizedBox(height: 40),
+
+              // ---------- FOOTER ----------
               Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Column(
@@ -288,6 +305,7 @@ class _SignInScreenState extends State<SignInScreen> {
     required String hint,
     required IconData icon,
     bool obscureText = false,
+    TextInputType keyboardType = TextInputType.text,
   }) {
     final Color fieldBackground = const Color(0xFF151F1A);
     final Color textPrimary = Colors.white.withOpacity(0.95);
@@ -296,6 +314,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
+      keyboardType: keyboardType,
       style: TextStyle(color: textPrimary, fontSize: 14),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
