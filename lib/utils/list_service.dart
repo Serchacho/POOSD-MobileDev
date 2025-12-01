@@ -273,20 +273,33 @@ class ListService {
 
   /// Get app stats (public endpoint)
   static Future<Map<String, dynamic>> getStats() async {
+    print('🔵 STATS: Fetching app statistics...');
+    print('🔵 URL: $baseUrl/stats');
+
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/stats'),
         headers: {'Content-Type': 'application/json'},
       );
 
+      print('🔵 Response Status: ${response.statusCode}');
+      print('🔵 Response Body: ${response.body}');
+
       final data = json.decode(response.body);
 
       if (response.statusCode == 200 && data['success'] == true) {
+        print('✅ Stats fetched successfully');
+        print('📊 Users: ${data['data']['users']}');
+        print('📊 Lists: ${data['data']['lists']}');
+        print('📊 Items: ${data['data']['items']}');
+
         return data['data'];
       } else {
+        print('❌ Failed to fetch stats: ${data['error']}');
         throw Exception(data['error'] ?? 'Failed to fetch stats');
       }
     } catch (e) {
+      print('❌ Get stats error: $e');
       throw Exception('Get stats error: $e');
     }
   }

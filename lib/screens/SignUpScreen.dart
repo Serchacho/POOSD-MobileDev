@@ -30,7 +30,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Future<void> _handleCreateAccount() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      print('❌ Form validation failed');
+      return;
+    }
+
+    print('🔵 SIGNUP: Starting signup...');
+    print('🔵 First Name: ${_firstNameController.text.trim()}');
+    print('🔵 Last Name: ${_lastNameController.text.trim()}');
+    print('🔵 Email: ${_emailController.text.trim()}');
+    print('🔵 Username: ${_usernameController.text.trim()}');
+    print('🔵 Password: ${"*" * _passwordController.text.length}'); // Don't log actual password
 
     // Show loading indicator
     showDialog(
@@ -42,6 +52,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
 
     try {
+      print('🔵 Calling AuthService.signup()...');
+
       // Call the signup API
       final result = await AuthService.signup(
         firstName: _firstNameController.text.trim(),
@@ -51,28 +63,45 @@ class _SignUpScreenState extends State<SignUpScreen> {
         password: _passwordController.text,
       );
 
+      print('✅ Signup API returned successfully');
+      print('✅ User ID: ${result['id']}');
+      print('✅ Message: ${result['message']}');
+
       // Close loading dialog
       Navigator.pop(context);
+
+      print('🔵 Showing success message...');
 
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(result['message'] ?? 'Account created! Please check your email.'),
           backgroundColor: Color(0xFF00C676),
+          duration: Duration(seconds: 4),
         ),
       );
 
+      print('🔵 Navigating to sign in screen...');
+
       // Navigate to sign in screen
       Navigator.pushReplacementNamed(context, '/signIn');
+
+      print('✅ Signup flow completed successfully');
     } catch (e) {
+      print('❌ Signup failed: $e');
+      print('❌ Error type: ${e.runtimeType}');
+
       // Close loading dialog
       Navigator.pop(context);
+
+      print('🔵 Showing error message to user...');
 
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.toString().replaceAll('Exception: ', '')),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 4),
         ),
       );
     }

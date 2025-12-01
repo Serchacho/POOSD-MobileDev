@@ -259,7 +259,7 @@ class _JoinListScreenState extends State<JoinListScreen> {
                                 ),
                               ),
                               onPressed: () {
-                                // no functionality yet
+                                Navigator.pushReplacementNamed(context, '/myLists');
                               },
                               child: const Text('Cancel'),
                             ),

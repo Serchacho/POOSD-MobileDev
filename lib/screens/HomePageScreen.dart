@@ -88,8 +88,44 @@ class _HomePageScreenState extends State<HomePageScreen> {
 // LOGGED OUT HOME
 // ---------------------------------------------------------------------------
 
-class _LoggedOutHome extends StatelessWidget {
+class _LoggedOutHome extends StatefulWidget {
   const _LoggedOutHome();
+
+  @override
+  State<_LoggedOutHome> createState() => _LoggedOutHomeState();
+}
+
+class _LoggedOutHomeState extends State<_LoggedOutHome> {
+  int totalLists = 0;
+  int totalItems = 0;
+  int totalUsers = 0;
+  bool isLoadingStats = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStats();
+  }
+
+  Future<void> _loadStats() async {
+    print('🔵 HomePageScreen: Loading stats...');
+    try {
+      final stats = await ListService.getStats();
+      setState(() {
+        totalUsers = stats['users'] ?? 0;
+        totalLists = stats['lists'] ?? 0;
+        totalItems = stats['items'] ?? 0;
+        isLoadingStats = false;
+      });
+      print('✅ Stats loaded: Lists=$totalLists, Items=$totalItems, Users=$totalUsers');
+    } catch (e) {
+      print('❌ Failed to load stats: $e');
+      setState(() {
+        isLoadingStats = false;
+        // Keep default values (0) if loading fails
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -245,19 +281,26 @@ class _LoggedOutHome extends StatelessWidget {
                     ),
                     const SizedBox(height: 28),
                     Row(
-                      children: const [
+                      children: [
                         Expanded(
-                          child:
-                          _StatCard(label: 'LISTS CREATED', value: '6+'),
+                          child: _StatCard(
+                            label: 'LISTS CREATED',
+                            value: isLoadingStats ? '...' : '$totalLists+',
+                          ),
                         ),
                         SizedBox(width: 8),
                         Expanded(
-                          child: _StatCard(label: 'ITEMS ADDED', value: '24'),
+                          child: _StatCard(
+                            label: 'ITEMS ADDED',
+                            value: isLoadingStats ? '...' : '$totalItems',
+                          ),
                         ),
                         SizedBox(width: 8),
                         Expanded(
-                          child:
-                          _StatCard(label: 'GROUPS SYNCING', value: '9'),
+                          child: _StatCard(
+                            label: 'USERS ACTIVE',
+                            value: isLoadingStats ? '...' : '$totalUsers',
+                          ),
                         ),
                       ],
                     ),
