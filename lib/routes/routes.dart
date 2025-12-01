@@ -40,6 +40,9 @@ class Routes {
     MYLISTSSCREEN: (context) => const MyListsScreen(),
     JOINLISTSCREEN: (context) => const JoinListScreen(),
     CREATELISTSCREEN: (context) => const CreateNewListScreen(),
-    EDITLISTSCREEN: (context) => const EditListScreen(),
+    EDITLISTSCREEN: (context) {
+      final listId = ModalRoute.of(context)?.settings.arguments as String? ?? '';
+      return EditListScreen(listId: listId);
+    },
   };
 }

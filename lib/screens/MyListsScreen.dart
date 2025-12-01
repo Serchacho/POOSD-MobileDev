@@ -438,7 +438,11 @@ class _MyListsScreenState extends State<MyListsScreen> {
                                       width: double.infinity,
                                       child: ElevatedButton(
                                         onPressed: () {
-                                          print('Opening list: ${list['_id']}');
+                                          Navigator.pushNamed(
+                                            context,
+                                            '/editList',
+                                            arguments: list['_id'],
+                                          );
                                         },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: accentGreen,
