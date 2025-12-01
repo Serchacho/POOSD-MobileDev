@@ -3,33 +3,46 @@ import 'package:http/http.dart' as http;
 import 'auth_service.dart';
 
 class ListService {
-  static const String baseUrl = 'http://10.0.2.2:5001/api';
+  static const String baseUrl = 'https://cop4331-group2.me/api';
 
   /// Get authorization headers
   static Map<String, String> _getHeaders() {
-    return {
+    final headers = {
       'Content-Type': 'application/json',
       'X-User-Id': AuthService.userId ?? '',
     };
+    print('🔵 Headers: $headers');
+    return headers;
   }
 
   /// Get all lists for current user
   static Future<List<Map<String, dynamic>>> getLists() async {
+    print('🔵 LIST: Fetching lists...');
+    print('🔵 URL: $baseUrl/lists');
+    print('🔵 User ID: ${AuthService.userId}');
+
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/lists'),
         headers: _getHeaders(),
       );
 
+      print('🔵 Response Status: ${response.statusCode}');
+      print('🔵 Response Body: ${response.body}');
+
       final data = json.decode(response.body);
 
       if (response.statusCode == 200 && data['success'] == true) {
         final lists = data['data'] as List;
+        print('✅ Found ${lists.length} lists');
+        print('📋 Lists: $lists');
         return lists.map((list) => list as Map<String, dynamic>).toList();
       } else {
+        print('❌ Failed to fetch lists: ${data['error']}');
         throw Exception(data['error'] ?? 'Failed to fetch lists');
       }
     } catch (e) {
+      print('❌ Get lists error: $e');
       throw Exception('Get lists error: $e');
     }
   }

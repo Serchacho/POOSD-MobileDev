@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
-// import 'HomePageScreen.dart';
-
+import 'HomePageScreen.dart';
 import '../utils/auth_service.dart';
 import '../utils/list_service.dart';
 
-class JoinListScreen extends StatelessWidget {
+class JoinListScreen extends StatefulWidget {
   const JoinListScreen({super.key});
+
+  @override
+  State<JoinListScreen> createState() => _JoinListScreenState();
+}
+
+class _JoinListScreenState extends State<JoinListScreen> {
+  final _codeController = TextEditingController();
+
+  @override
+  void dispose() {
+    _codeController.dispose();
+    super.dispose();
+  }
 
   Future<void> _handleLogout(BuildContext context) async {
     await AuthService.logout();
@@ -14,6 +26,7 @@ class JoinListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ... rest of your existing build method code
     final Color background = const Color(0xFF050F0B);
     final Color cardBackground = const Color(0xFF101F18);
     final Color accentGreen = const Color(0xFF00C676);
@@ -202,6 +215,7 @@ class JoinListScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 2),
                           child: TextField(
+                            controller: _codeController,  // Add this line
                             style: TextStyle(
                               color: textPrimary,
                               fontSize: 16,

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  static const String baseUrl = 'http://10.0.2.2:5001/api'; // Match your PORT in server.js
+  static const String baseUrl = 'https://cop4331-group2.me/api';
 
   // Store user data
   static String? _userId;
@@ -34,6 +34,10 @@ class AuthService {
     required String login,
     required String password,
   }) async {
+    print('🔵 AUTH: Starting signup...');
+    print('🔵 URL: $baseUrl/signup');
+    print('🔵 Data: firstName=$firstName, lastName=$lastName, email=$email, login=$login');
+
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/signup'),
@@ -47,18 +51,24 @@ class AuthService {
         }),
       );
 
+      print('🔵 Response Status: ${response.statusCode}');
+      print('🔵 Response Body: ${response.body}');
+
       final data = json.decode(response.body);
 
       if (response.statusCode == 200 && data['id'] != '-1') {
+        print('✅ Signup successful!');
         return {
           'success': true,
           'id': data['id'],
           'message': 'Account created! Please check your email to verify.',
         };
       } else {
+        print('❌ Signup failed: ${data['error']}');
         throw Exception(data['error'] ?? 'Signup failed');
       }
     } catch (e) {
+      print('❌ Signup error: $e');
       throw Exception('Signup error: $e');
     }
   }
@@ -85,6 +95,10 @@ class AuthService {
 
   /// Login with username/email and password
   static Future<Map<String, dynamic>> userLogin(String loginOrEmail, String password) async {
+    print('🔵 AUTH: Starting login...');
+    print('🔵 URL: $baseUrl/login');
+    print('🔵 Login/Email: $loginOrEmail');
+
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/login'),
@@ -95,10 +109,13 @@ class AuthService {
         }),
       );
 
+      print('🔵 Response Status: ${response.statusCode}');
+      print('🔵 Response Body: ${response.body}');
+
       final data = json.decode(response.body);
 
       if (response.statusCode == 200 && data['id'] != '-1') {
-        // Save user data
+        print('✅ Login successful!');
         _userId = data['id'];
         _firstName = data['firstName'];
         _lastName = data['lastName'];
@@ -113,11 +130,14 @@ class AuthService {
           'emailVerified': data['emailVerified'],
         };
       } else if (response.statusCode == 403) {
+        print('❌ Email not verified');
         throw Exception('Please verify your email before logging in');
       } else {
+        print('❌ Login failed: ${data['error']}');
         throw Exception(data['error'] ?? 'Login failed');
       }
     } catch (e) {
+      print('❌ Login error: $e');
       throw Exception('Login error: $e');
     }
   }

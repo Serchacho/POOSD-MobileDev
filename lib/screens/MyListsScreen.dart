@@ -296,42 +296,166 @@ class _MyListsScreenState extends State<MyListsScreen> {
 
                         const SizedBox(height: 20),
 
-                        // No lists yet box
-                        Container(
-                          height: 170,
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: textSecondary.withOpacity(0.3),
-                              width: 1,
+
+                        // Display lists or loading/error/empty state
+                        if (isLoading)
+                          Container(
+                            height: 170,
+                            child: Center(
+                              child: CircularProgressIndicator(color: accentGreen),
                             ),
-                          ),
-                          child: Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'No lists yet',
-                                  style: TextStyle(
-                                    color: textPrimary,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                          )
+                        else if (errorMessage.isNotEmpty)
+                          Container(
+                            height: 170,
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    errorMessage,
+                                    style: TextStyle(color: Colors.red),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  SizedBox(height: 12),
+                                  ElevatedButton(
+                                    onPressed: _loadLists,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: accentGreen,
+                                    ),
+                                    child: Text('Retry'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        else if (lists.isEmpty)
+                          Container(
+                            height: 170,
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: textSecondary.withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'No lists yet',
+                                    style: TextStyle(
+                                      color: textPrimary,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Start by creating a new list or join an existing one using a share code.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: textSecondary,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        else
+                          Column(
+                            children: lists.map((list) {
+                              return Container(
+                                margin: EdgeInsets.only(bottom: 16),
+                                padding: EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: cardBackground,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: textSecondary.withOpacity(0.2),
+                                    width: 1,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Start by creating a new list or join an existing one using a share code.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: textSecondary,
-                                    fontSize: 13,
-                                  ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      list['name'] ?? 'Unnamed List',
+                                      style: TextStyle(
+                                        color: textPrimary,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8),
+                                    if (list['description'] != null && list['description'].toString().isNotEmpty)
+                                      Text(
+                                        list['description'],
+                                        style: TextStyle(color: textSecondary, fontSize: 14),
+                                      ),
+                                    SizedBox(height: 12),
+                                    Row(
+                                      children: [
+                                        Icon(Icons.key, color: textSecondary, size: 16),
+                                        SizedBox(width: 6),
+                                        Text(
+                                          'Code: ${list['code']}',
+                                          style: TextStyle(color: textSecondary, fontSize: 13),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 6),
+                                    Row(
+                                      children: [
+                                        Icon(Icons.person_outline, color: textSecondary, size: 16),
+                                        SizedBox(width: 6),
+                                        Text(
+                                          'Created by: ${list['creatorName'] ?? 'Unknown'}',
+                                          style: TextStyle(color: textSecondary, fontSize: 13),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 6),
+                                    Row(
+                                      children: [
+                                        Icon(Icons.shopping_cart_outlined, color: accentGreen, size: 16),
+                                        SizedBox(width: 6),
+                                        Text(
+                                          '${list['purchasedItems'] ?? 0} of ${list['totalItems'] ?? 0} items purchased',
+                                          style: TextStyle(
+                                            color: accentGreen,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 12),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          print('Opening list: ${list['_id']}');
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: accentGreen,
+                                          foregroundColor: Colors.white,
+                                          padding: EdgeInsets.symmetric(vertical: 12),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
+                                        ),
+                                        child: Text('View List', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              );
+                            }).toList(),
                           ),
-                        ),
                       ],
                     ),
                   ),

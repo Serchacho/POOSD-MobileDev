@@ -291,7 +291,7 @@ class _CreateNewListScreenState extends State<CreateNewListScreen> {
                                 ),
                               ),
                               onPressed: () {
-                                // no functionality yet
+                                Navigator.pushNamed(context, '/myLists');
                               },
                               child: const Text('Cancel'),
                             ),
@@ -306,8 +306,67 @@ class _CreateNewListScreenState extends State<CreateNewListScreen> {
                                   borderRadius: BorderRadius.circular(22),
                                 ),
                               ),
-                              onPressed: () {
-                                // TODO: hook up create-list API later
+                              onPressed: () async {
+                                final name = _nameController.text.trim();
+                                final description = _descriptionController.text.trim();
+
+                                // Validate input
+                                if (name.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Please enter a list name'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                print('🔵 Creating list: $name');
+
+                                // Show loading dialog
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) => Center(
+                                    child: CircularProgressIndicator(color: accentGreen),
+                                  ),
+                                );
+
+                                try {
+                                  final result = await ListService.createList(
+                                    name: name,
+                                    description: description,
+                                  );
+
+                                  print('✅ List created: ${result['_id']}');
+
+                                  // Close loading dialog
+                                  Navigator.pop(context);
+
+                                  // Show success message
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('List "${result['name']}" created successfully!'),
+                                      backgroundColor: accentGreen,
+                                    ),
+                                  );
+
+                                  // Navigate to My Lists screen
+                                  Navigator.pushReplacementNamed(context, '/myLists');
+                                } catch (e) {
+                                  print('❌ Create list error: $e');
+
+                                  // Close loading dialog
+                                  Navigator.pop(context);
+
+                                  // Show error message
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(e.toString().replaceAll('Exception: ', '')),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
                               },
                               child: const Text('Create List'),
                             ),
